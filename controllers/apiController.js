@@ -44,5 +44,28 @@ module.exports = function (app){
                 }
             });
         }
-    })
+    });
+
+    //Criando uma rota para deletar uma pessoa pelo id
+    app.delete('/api/deletarPessoa/:id', function(req,res){
+        pessoaModel.findOneAndRemove(req.params.id,function(err,results){
+            if(err){
+                console.log(err);
+            }else{
+                res.send('Pessoa removida com sucesso!');
+            }
+        });
+    });
+
+    // Criando uma rota update utilizando o put
+    app.put('/api/atualizarPessoa/',function(req,res){
+        pessoaModel.findOneAndUpdate(req.body.id,{nome: req.body.nome, sobrenome:req.body.sobrenome},function(err,results){
+            if(err){
+                console.log(err);
+            }else{
+                res.send('Pessoa atualizada com sucesso!');
+            }
+        });
+
+    });
 }
