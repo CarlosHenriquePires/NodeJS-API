@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 var mongoDB = require('./config/connection');
 var dbController = require('./controllers/dbController');
+var apiController = require('./controllers/apiController');
 
 
 // Utilizar dados estáticos do public
@@ -18,5 +19,7 @@ app.get('/',function(req,res){
 //Conectando ao banco
 mongoDB();
 dbController(app);
+apiController(app);
+
 
 app.listen(3000);
