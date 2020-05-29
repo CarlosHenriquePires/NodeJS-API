@@ -7,6 +7,21 @@ module.exports = function (app){
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({extended: true}));
 
+        // Rota para login
+        app.post('/login',function(req,res){
+            pessoaModel.find({nome:req.body.nome,sobrenome:req.body.sobrenome}, function(err,results){
+                if(err){
+                    console.log(err);
+                }else{
+                    if(results.length > 0){
+                        res.send(results);
+                    }else{
+                       res.send('Não foi possível efetuar o login!');
+                    }
+                }
+            });
+        });
+
     //Rota para buscar a pessoa pelo nome e retorna o json
     app.get('/api/buscarPessoa/:nome',function(req,res){
         pessoaModel.find({nome: req.params.nome}, function(err,results){
@@ -45,6 +60,22 @@ module.exports = function (app){
             });
         }
     });
+    
+    // Adicionado uma rota individual para inserir pessoa
+    app.post('/api/inserirPessoa/',function(req,res){;
+            var novaPessoa = {
+                nome: req.body.nome,
+                sobrenome: req.body.sobrenome
+            };
+            // Criar uma nova pessoa retornando o json
+            pessoaModel.create(novaPessoa,function(err,results){
+                if(err){
+                    console.log(err);
+                }else{
+                    res.send('Cadastro salvo com sucesso!' + '\n' + results);
+                }
+            });
+   });
 
     //Criando uma rota para deletar uma pessoa pelo id
     app.delete('/api/deletarPessoa/:id', function(req,res){

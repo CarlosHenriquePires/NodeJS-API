@@ -3,7 +3,7 @@ var app = express();
 var mongoDB = require('./config/connection');
 var dbController = require('./controllers/dbController');
 var apiController = require('./controllers/apiController');
-
+var cors = require('cors');
 
 // Utilizar dados estáticos do public
 app.use('/assets',express.static('./public'));
@@ -15,6 +15,14 @@ app.set('view engine','ejs');
 app.get('/',function(req,res){
     res.render('index');
 });
+
+// Habilitando o cors
+var corsOptions = {
+    origin: 'http://localhost:4200',
+    optionsSuccessStatus: 200
+  };
+  
+app.use(cors(corsOptions));
 
 //Conectando ao banco
 mongoDB();
