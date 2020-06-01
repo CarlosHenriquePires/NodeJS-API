@@ -1,30 +1,15 @@
-var pessoaModel = require('../models/pessoaModel');
+var myVideos = require('../models/myVideosModel');
 var bodyParser = require('body-parser');
 
-module.exports = function (app){
+module.exports = function(app){
 
-    //Aceita qualquer tipo de requisição seja via json ou forms no body
+    //Aceita qualquer tipo de requisição seja via json ou forms
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({extended: true}));
 
-        // Rota para login
-        app.post('/login',function(req,res){
-            pessoaModel.find({nome:req.body.nome,sobrenome:req.body.sobrenome}, function(err,results){
-                if(err){
-                    console.log(err);
-                }else{
-                    if(results.length > 0){
-                        res.send(results);
-                    }else{
-                       res.send('Não foi possível efetuar o login!');
-                    }
-                }
-            });
-        });
-
-    //Rota para buscar a pessoa pelo nome e retorna o json
-    app.get('/api/buscarPessoa/:nome',function(req,res){
-        pessoaModel.find({nome: req.params.nome}, function(err,results){
+    // Rota que irá consultar e retornará todos os videos
+    app.get('/api/myVideos', function(req,res){
+        myVideos.find({}, function(err, results){
             if(err){
                 console.log(err);
             }else{
@@ -32,71 +17,28 @@ module.exports = function (app){
             }
         });
     });
-    // Rota para adicionar ou atualizar uma Pessoa verificando se foi passado o id da pessoa
-    app.post('/api/addPessoa/',function(req,res){;
-        if(req.body.id){
-            pessoaModel.findByIdAndUpdate(req.body.id,{nome:req.body.nome, sobrenome:req.body.sobrenome},function(err,results){
-                if(err){
-                    console.log(err);
-                }else{
-                    var dadosAtualizados = {id:req.body.id,nome:req.body.nome, sobrenome:req.body.sobrenome};
-                    var jsonDadosAtualizado = JSON.stringify(dadosAtualizados);
-                    // Apresenta os dados antes e depois de serem atualizados
-                    res.send('Cadastro atualizado com sucesso!' + '\n' + results + '\n' + jsonDadosAtualizado);
-                }
-            });
-        }else{
-            var novaPessoa = {
-                nome: req.body.nome,
-                sobrenome: req.body.sobrenome
-            };
-            // Criar uma nova pessoa retornando o json
-            pessoaModel.create(novaPessoa,function(err,results){
-                if(err){
-                    console.log(err);
-                }else{
-                    res.send('Cadastro salvo com sucesso!' + '\n' + results);
-                }
-            });
-        }
-    });
-    
-    // Adicionado uma rota individual para inserir pessoa
-    app.post('/api/inserirPessoa/',function(req,res){;
-            var novaPessoa = {
-                nome: req.body.nome,
-                sobrenome: req.body.sobrenome
-            };
-            // Criar uma nova pessoa retornando o json
-            pessoaModel.create(novaPessoa,function(err,results){
-                if(err){
-                    console.log(err);
-                }else{
-                    res.send('Cadastro salvo com sucesso!' + '\n' + results);
-                }
-            });
-   });
 
-    //Criando uma rota para deletar uma pessoa pelo id
-    app.delete('/api/deletarPessoa/:id', function(req,res){
-        pessoaModel.findOneAndRemove(req.params.id,function(err,results){
+    // Rota para cadastrar videos
+    app.post('/api/myVideos/add',function(req,res){
+        myVideos.create({titulo: req.body.titulo, descricao: req.body.descricao,
+            categoria: req.body.categoria, link: req.body.link}, function(err,results){
+                if(err){
+                    console.log(err);
+                }else{
+                    res.send(results);
+                }  
+            });
+    });
+
+    // Rota para apagar videos
+
+    app.delete('/api/myVideos/delete/:id', function(req,res){
+        myVideos.findByIdAndRemove(req.params.id,function(err,results){
             if(err){
                 console.log(err);
             }else{
-                res.send('Pessoa removida com sucesso!');
+                res.send(results);
             }
         });
-    });
-
-    // Criando uma rota update utilizando o put
-    app.put('/api/atualizarPessoa/',function(req,res){
-        pessoaModel.findOneAndUpdate(req.body.id,{nome: req.body.nome, sobrenome:req.body.sobrenome},function(err,results){
-            if(err){
-                console.log(err);
-            }else{
-                res.send('Pessoa atualizada com sucesso!');
-            }
-        });
-
     });
 }
