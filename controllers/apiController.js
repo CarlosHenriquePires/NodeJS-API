@@ -18,6 +18,15 @@ module.exports = function(app){
         });
     });
 
+    app.get('/api/myVideos/pesquisar', function(req,res){
+        myVideos.find({categoria: req.query.pesquisar}, function(err, results){
+            if(err){
+                console.log(err);
+            }else{
+                res.send(results);
+            }
+        });
+    });
     // Rota para cadastrar videos
     app.post('/api/myVideos/add',function(req,res){
         myVideos.create({titulo: req.body.titulo, descricao: req.body.descricao,
